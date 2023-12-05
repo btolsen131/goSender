@@ -4,6 +4,7 @@ import (
   "fmt"
   "net"
   "os"
+  "bufio"
 )
 
 func main() {
@@ -29,12 +30,26 @@ func main() {
 
   defer conn.Close()
 
-  _ , err = conn.Write([]byte(message))
-  if err != nil {
-    fmt.Println("Error sending message: ", err)
-    os.Exit(1)
+  scanner := bufio.NewScanner(os.Stdin)
+  
+  for { 
+    fmt.Println("Enter message (or 'exit' to quit): ")
+    scanner.Scan()
+    message = scanner.Text()
+
+    if message == "exit" {
+      break
+    }
+
+    _ , err = conn.Write([]byte(message))
+    if err != nil {
+      fmt.Println("Error sending message: ", err)
+      os.Exit(1)
+    }
+
+    fmt.Println("Message sent to server!")
   }
 
-  fmt.Println("Message sent to server!")
+  fmt.Println("Sender exiting.")
 
 }
